@@ -1,1 +1,1 @@
-alert('Hello YO');
+alert('none');
