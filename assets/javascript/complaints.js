@@ -1,3 +1,15 @@
+// Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD2Ei8oCdvJf4h6gl2Bg0VJs4jB8ypxsEg",
+    authDomain: "complaintdepartment-e7321.firebaseapp.com",
+    databaseURL: "https://complaintdepartment-e7321.firebaseio.com",
+    storageBucket: "complaintdepartment-e7321.appspot.com",
+  };
+  firebase.initializeApp(config);
+
+//global variables
+
+
 // How do we use the APIs?
 //
 var keywords = 'wife-funny-meme';
