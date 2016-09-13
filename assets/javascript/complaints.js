@@ -10,10 +10,10 @@ var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search';
 
 $(document).ready(function(){
 //They click on a complaint category
-  //If they click a complaint call search.
+  //Maria - If they click a complaint call search.
     //Get keywords from firebase
 
-  //Else if they add a complaint add it, then call search.
+  //Maria - Else if they add a complaint add it, then call search.
     //Bring up a modal
 
     //User enters description and keywords
@@ -30,20 +30,27 @@ $(document).ready(function(){
           //Add image
           $('#apiInfo').append('<img src="' + results.items[i].link + '">');
           //Add the option to click yess or no, display button and text.
-
+          //$('imageDiv').html('Do you feel better yet?');
+          $('<button>Yes</button>').click(feelBetter());
           //If Onclick yes run yes function
 
           level++;
-        }
-        //New for loop for the videos 3 times
+        };
+      });
 
+    $.ajax({ url: youtubequeryURL, method: 'GET'})
+      .done(function(results) {
+        //New for loop for the videos 3 times
+        for (var i = 0; i < results.length; i++) {
+          $('#apiInfo').append('<video src="' + results.items[i].link + '">');
+        }
           //Add videos
 
           //Add buttons yes/no
 
           //If click yes run yes function
           level++;
-      })
+      });
   }
 
   function feelBetter(){
