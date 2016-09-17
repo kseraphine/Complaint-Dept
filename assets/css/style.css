@@ -1,0 +1,19 @@
+h5{
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  top: 20%;
+
+}
+
+.container{
+  text-align: center;
+}
+
+.carousel{
+  text-align: center;
+}
+
+h6{
+  font-size: 140%;
+}
