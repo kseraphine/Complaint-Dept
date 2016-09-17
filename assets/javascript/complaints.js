@@ -1,13 +1,13 @@
 // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyD2Ei8oCdvJf4h6gl2Bg0VJs4jB8ypxsEg",
-    authDomain: "complaintdepartment-e7321.firebaseapp.com",
-    databaseURL: "https://complaintdepartment-e7321.firebaseio.com",
-    storageBucket: "complaintdepartment-e7321.appspot.com",
-  };
-  firebase.initializeApp(config);
+var config = {
+  apiKey: "AIzaSyD2Ei8oCdvJf4h6gl2Bg0VJs4jB8ypxsEg",
+  authDomain: "complaintdepartment-e7321.firebaseapp.com",
+  databaseURL: "https://complaintdepartment-e7321.firebaseio.com",
+  storageBucket: "complaintdepartment-e7321.appspot.com",
+};
+firebase.initializeApp(config);
 
-  var database = firebase.database();
+var database = firebase.database();
 
 //global variables
 var category;
@@ -51,32 +51,31 @@ $(document).ready(function(){
       }
 
       if (complaintCategory == 'Family') {
-        database.ref('family').push(newComplaint);
+        database.ref('complaints/family').push(newComplaint);
       } else if (complaintCategory == 'Job') {
-        database.ref('job').push(newComplaint);
+        database.ref('complaints/job').push(newComplaint);
       } else if (complaintCategory == 'School') {
-        database.ref('school').push(newComplaint);
+        database.ref('complaints/school').push(newComplaint);
       };
       console.log(newComplaint.complaint);
       console.log(newComplaint.keywords);
       console.log(complaintCategory);
 
-      return false;
 
   });
 
   //display the complaints
-    database.ref('family').on("child_added", function(childSnapshot) {
+  database.ref('family').on("child_added", function(childSnapshot) {
 
-      console.log(childSnapshot.val());
+    console.log(childSnapshot.val());
 
-      var currentComplaint = childSnapshot.val().complaint;
-      var currentKeywords = childSnapshot.val().keywords;
+    var currentComplaint = childSnapshot.val().complaint;
+    var currentKeywords = childSnapshot.val().keywords;
 
-      console.log(currentComplaint);
-      console.log(currentKeywords);
+    console.log(currentComplaint);
+    console.log(currentKeywords);
 
-    });
+  });
 
 
     //Bring up a modal
@@ -84,7 +83,7 @@ $(document).ready(function(){
     //User enters description and keywords
 
     //Add to firebase
-//Happens when they click complaint or after adding a complaint.
+  //Happens when they click complaint or after adding a complaint.
   function search() {
     var level = 0;
     $.ajax({ url: googlequeryURL, method: 'GET' })
