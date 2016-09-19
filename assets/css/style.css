@@ -17,3 +17,27 @@ h5{
 h6{
   font-size: 140%;
 }
+
+
+label, input {
+	width: 100%;
+	margin: 10px 0;
+	font-family: arial, sans-serf;
+}
+input {
+	min-height: 30px;
+	margin-bottom: 1em;
+
+}
+
+button {
+	text-transform: uppercase;
+	padding: 10px 20px;
+	background-color: #ccc;
+	border: none;
+}
+#new-complaint {
+	padding: .5em;
+	max-width: 500px;
+	margin: auto;
+}

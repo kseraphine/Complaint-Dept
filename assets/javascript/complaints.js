@@ -5,6 +5,7 @@ var config = {
   databaseURL: "https://complaintdepartment-e7321.firebaseio.com",
   storageBucket: "complaintdepartment-e7321.appspot.com",
 };
+
 firebase.initializeApp(config);
 
 var database = firebase.database();
@@ -16,7 +17,6 @@ var keywords;
 
 
 // How do we use the APIs?
-//
 //var keywords = 'wife-funny-meme';
 var key = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
 var cx = '003192956300846753352:1j_2oos-ga0'
@@ -33,59 +33,40 @@ var resultNum = 0;
 var yesBtn = $('<button id="yes">Yes</button>');
 var noBtn = $('<button id="no">No</button>');
 
+var complaintCategory;
+
 //Add firebase and setup initial database
 
 $(document).ready(function(){
+
+
 //They click on a complaint category
-  //Maria - If they click a complaint call search.
+
+  $('.carousel-item').on('click', function() {
+
+    complaintCategory = $(this).attr('data-category');
+    console.log(complaintCategory);
+
+    //Maria - If they click a complaint call search.
     //Get keywords from firebase
+    //display the complaints
+    database.ref('complaints').on("child_added", function(childSnapshot) {
 
-  //Else if they add a complaint add it, then call search.
+      //console.log(childSnapshot.val());
 
+      var currentComplaint = childSnapshot.val().complaint;
+      var currentKeywords = childSnapshot.val().keywords;
 
-//var path = adaFirstNameRef.toString();
+      //console.log(currentComplaint);
+      console.log(currentKeywords);
+      $('#category').text(complaintCategory);
 
-  $('#submit-complaint').on('click', function() {
-    /*
-      var complaintCategoryRef = firebase.database().ref('family');
-      var complaintRef = complaintCategoryRef.child('complaint');
-      var complaintKeywordsRef = complaintRef.child('keywords');
-    */
-      var complaint = $('#complaint').val();
-      var complaintKeywords = $('#keywords').val().trim().replace(/,/g, '').split(" ");
-      var complaintCategory = $('#category').text();
-
-      var newComplaint = {
-        complaint: complaint,
-        keywords: complaintKeywords,
-      }
-
-      if (complaintCategory == 'Family') {
-        database.ref('complaints/family').push(newComplaint);
-      } else if (complaintCategory == 'Job') {
-        database.ref('complaints/job').push(newComplaint);
-      } else if (complaintCategory == 'School') {
-        database.ref('complaints/school').push(newComplaint);
-      };
-      console.log(newComplaint.complaint);
-      console.log(newComplaint.keywords);
-      console.log(complaintCategory);
-
+    });
 
   });
+  
+  //Else if they 
 
-  //display the complaints
-  database.ref('family').on("child_added", function(childSnapshot) {
-
-    console.log(childSnapshot.val());
-
-    var currentComplaint = childSnapshot.val().complaint;
-    var currentKeywords = childSnapshot.val().keywords;
-
-    console.log(currentComplaint);
-    console.log(currentKeywords);
-
-  });
 
 
   //Maria - Else if they add a complaint add it, then call search.
@@ -95,6 +76,35 @@ $(document).ready(function(){
     //User enters description and keywords
 
     //Add to firebase
+
+    //On click add a complaint
+
+   $('#submit-complaint').on('click', function() {
+    
+      var complaint = $('#complaint').val();
+      var complaintKeywords = $('#keywords').val().trim().replace(/,/g, '').split(" ") + ', meme, ' + 'funny' ;
+    
+      var newComplaint = {
+        complaint: complaint,
+        keywords: complaintKeywords,
+      }
+
+      if (complaintCategory == 'family') {
+        database.ref('complaints/family').push(newComplaint);
+      } else if (complaintCategory == 'job') {
+        database.ref('complaints/job').push(newComplaint);
+      } else if (complaintCategory == 'school') {
+        database.ref('complaints/school').push(newComplaint);
+      } else if (complaintCategory == 'weather') {
+        database.ref('complaints/weather').push(newComplaint);
+      };
+      console.log(newComplaint.complaint);
+      console.log(newComplaint.keywords);
+      console.log(complaintCategory);
+
+
+  });
+
   //Happens when they click complaint or after adding a complaint.
   function search() {
     var level = 0;
