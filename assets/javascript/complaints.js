@@ -5,8 +5,36 @@ var cx = '003192956300846753352:1j_2oos-ga0';
 var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
 var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
 var resultNum = 0;
+var level = 0
 var yesBtn = $('<button id="yes">Yes</button>');
 var noBtn = $('<button id="no">No</button>');
+var level1 = [
+  'Your problem isn\'t the problem your reaction is the problem.',
+  'Your problem is not knowing you\'re the problem',
+  'Oh really? You know what that sounds like?   Not a problem',
+  'I fail to see the problem here',
+  'I going to file this one under \"Y\" for \"Your problem, not mine\"',
+  'Relax – we\'re ALL crazy. It\'s not a competition',
+  'Sorry about your first world problem',
+  'Your problem is like  when your phone only charges if you angle and bend the cable a certain way',
+];
+var level2 = ['It\'s time to relax',
+  'The only way to deal with your problem is…order a pizza!',
+  'Alcohol probably won\'t fix your problems…but isn\'t it worth a shot or two?',
+  'Does running away from your problem count as exercising?',
+  'Don\'t take life so seriously. You\'ll never get out of it alive',
+  'Always remember that you are absolutely unique, just like everyone else',
+  'Whatever your problem is the answer is not in the fridge',
+  'Face your problems\, don\'t facebook them',
+];
+var level3 = ['Even bacon can\'t solve your problem!',
+  'You\'ve got 99 problems…',
+  'Whoooa',
+  'But did you die?',
+  'Keep calm and chill',
+  'Just relax and accept the crazy',
+];
+
 //Add firebase and setup initial database
 
 $(document).ready(function(){
@@ -49,8 +77,17 @@ $(document).ready(function(){
 
         //TODO: On YES click display text from array and return to main screen
         $('#yes').on('click', function () {
-          $('#apiInfo').html('Yay! Glad you feel better.');
+
+          $('#apiInfo').empty();
           $('#videoDiv').empty();
+
+          if (level <= 1) {
+            $('#apiInfo').html(Math.floor(Math.random() * level1.length));
+          }else if (level == 2) {
+            $('#apiInfo').html(Math.floor(Math.random() * level2.length));
+          }else {
+            $('#apiInfo').html(Math.floor(Math.random() * level3.length));
+          }
         });
       });
     }else if (resultNum == 2) {
@@ -80,8 +117,16 @@ $(document).ready(function(){
 
           //TODO: On YES click display text from array and return to main screen
           $('#yes').on('click', function () {
-            $('#apiInfo').html('Yay! Glad you feel better.');
             $('#apiInfo').empty();
+            $('#videoDiv').empty();
+
+            if (level <= 1) {
+              $('#apiInfo').html(Math.floor(Math.random() * level1.length));
+            }else if (level == 2) {
+              $('#apiInfo').html(Math.floor(Math.random() * level2.length));
+            }else {
+              $('#apiInfo').html(Math.floor(Math.random() * level3.length));
+            }
           });
         });
     }
