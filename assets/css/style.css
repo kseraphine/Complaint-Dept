@@ -1,19 +1,47 @@
+body{
+  background-image: url("assets/photos/wood.jpg");
+}
+
+img{
+  height: 200px;
+  width: 100%;
+}
+
 h5{
   position: absolute;
   text-align: center;
   width: 100%;
   top: 20%;
+  color: white;
+  font-weight: bold;
+  text-shadow: 4px 4px 5px black;
+  letter-spacing: 1.5px;
+}
 
+span{
+
+}
+
+h6{
+  font-size: 140%;
 }
 
 .container{
   text-align: center;
 }
 
+.card-panel{
+    color: black;
+    background-image: url("assets/photos/wood.jpg");
+}
+
 .carousel{
   text-align: center;
 }
 
-h6{
-  font-size: 140%;
+footer.page-footer{
+  background-color: #212121;
+}
+div.card-panel{
+  background-image: url("assets/photos/wood.jpg");
 }
