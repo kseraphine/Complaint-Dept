@@ -3,49 +3,45 @@
 <head>
   <title>The Complaint Department</title>
   <meta charset="utf-8">
-    <!-- Compiled and minified CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSS -->
+  <link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css"  media="screen,projection">
+  <link type="text/css" rel="stylesheet" href="assets/css/style.css">
+  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- JAVASCRIPT -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <!--<script type="text/javascript" src="js/materialize.min.js"></script>-->
-  <!-- Compiled and minified JavaScript -->
   <script type="text/javascript" src="assets/javascript/materialize.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/3.3.2/firebase.js"></script>
   <script src="assets/javascript/complaints.js"></script>
-  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!--Import materialize.css-->
-  <link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css"  media="screen,projection">
-  <!--Let browser know website is optimized for mobile-->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link type="text/css" rel="stylesheet" href="assets/css/style.css">
-
 </head>
 
 <body>
-
   <div class="container">
-      <div class="card-panel">
-        <h1>The Complaint Department</h1>
-      </div>
-      <div class="row">
-        <div class="col s12">
-          <h6>Is something wrong in your life? In a bad mood? Need a little pick me up? </h6>
-        </div>
-      </div>
+    <div class="card-panel"><h1><span class="text">The Complaint Department</span></h1></div>
+      <div class="divider"></div>
+        <div class="section">
+          <p><h6>Is something wrong in your life? In a bad mood? Need a little pick me up?</h6></p>
+          </div>
+      <div class="divider"></div>
   </div>
+
   <div class="carousel">
-      <a class="carousel-item" href="#one!" id="family" data-category="family"><h5>Family</h5><img src="http://lorempixel.com/250/250/nature/1"></a>
-      <a class="carousel-item" href="#two!" id="job" data-category="job"><h5>Job</h5><img src="http://lorempixel.com/250/250/nature/2"></a>
-      <a class="carousel-item" href="#three!" id="weather" data-category="weather"><h5>Weather</h5><img src="http://lorempixel.com/250/250/nature/3"></a>
-      <a class="carousel-item" href="#four!" id="school" data-category="school"><h5>School</h5><img src="http://lorempixel.com/250/250/nature/4"></a>
+    <a class="carousel-item" href="#one!" id="family" data-category="family"><h5>Family</h5><img src="assets/photos/family2.jpeg"></a>
+    <a class="carousel-item" href="#two!" id="job" data-category="job"><h5>Job</h5><img src="assets/photos/job2.jpg"></a>
+    <a class="carousel-item" href="#three!" id="weather" data-category="weather"><h5>Weather</h5><img src="assets/photos/rain.jpg"></a>
+    <a class="carousel-item" href="#four!" id="school" data-category="school"><h5>School</h5><img src="assets/photos/class2.jpg"></a>
   </div>
-  <div id="complaint-list">
-   
+  <div id="complaint-list"></div>
 
-  </div>
-  
+  <footer class="page-footer">
+    <div class="footer-copyright">
+      <div class="container">
+      © 2016 MARKELTAT Inc.
+      </div>
+    </div>
+  </footer>
 
-  
-  
   <!-- Modal Structure -->
   <div id="modal1" class="modal">
     <form id="new-complaint">
@@ -56,9 +52,7 @@
       <input type="text" id="keywords">
       <button id="submit-complaint">Add Complaint</button>
     </form>
-    <div class="modal-footer">
-      
-    </div>
+    <div class="modal-footer"></div>
   </div>
   <div id="modal2" class="modal">
     <p>HI</p>
@@ -66,28 +60,17 @@
       <div id="videoDiv"></div>
       <div id="imageDiv"></div>
       <div class="modal-footer">
-      
-    </div>
+        <h2>DO YOU FEEL BETTER</h2>
+        <button id="btnYes">Yes</button>
+        <button id="btnNo">No</button>
+      </div>
   </div>
 
-<!--
-   
- -->
-      
-      <footer></footer>    
-
 <!--Import jQuery before materialize.js-->
-
-      <script>
-        $('.carousel').carousel();
-
-      </script>
+  <script>
+    $('.carousel').carousel();
+  </script>
 
 
 </body>
-
-
-
-
-
 </html>
