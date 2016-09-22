@@ -12,11 +12,24 @@ h5{
 
 .carousel{
   text-align: center;
+  margin-top: -100px
 }
 
 h6{
   font-size: 140%;
 }
+#complaint-list {
+	margin-top: -50px;
+    padding: 1em;
+    background-color: #ccc;
+    z-index: 100;
+	position: relative;
+}
+#complaint-list p {
+	text-align: center;
+	cursor: pointer;
+}
+
 
 
 label, input {

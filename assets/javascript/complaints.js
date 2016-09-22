@@ -23,7 +23,7 @@ var cx = '003192956300846753352:1j_2oos-ga0'
 var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + key + '&cx=' + cx + '&searchType=image&q=' + keywords;
 var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search';
 
-var keywords = 'bad-boss-funny';
+//var keywords = 'bad-boss-funny';
 var gKey = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
 var yKey = 'AIzaSyBqbCIjRdfs4cyO4wbp1Mk0n7JERQpTGeY';
 var cx = '003192956300846753352:1j_2oos-ga0';
@@ -45,25 +45,60 @@ $(document).ready(function(){
   $('.carousel-item').on('click', function() {
 
     complaintCategory = $(this).attr('data-category');
-    console.log(complaintCategory);
+    $('#complaint-list').empty();
+    console.log('Category: ' + complaintCategory);
 
     //Maria - If they click a complaint call search.
     //Get keywords from firebase
     //display the complaints
-    database.ref('complaints').on("child_added", function(childSnapshot) {
+    database.ref('complaints/' + complaintCategory).on("child_added", function(childSnapshot) {
 
       //console.log(childSnapshot.val());
 
       var currentComplaint = childSnapshot.val().complaint;
-      var currentKeywords = childSnapshot.val().keywords;
 
       //console.log(currentComplaint);
-      console.log(currentKeywords);
+      console.log(currentComplaint);
       $('#category').text(complaintCategory);
+
+      //Get complains for selected category
+      $('#complaint-list').append('<p class="chosen-complaint" data-complaint="' + currentComplaint + '">' + currentComplaint + '</p>');
+
+      //Click specific complaint from list
+      $('.chosen-complaint').on('click', function() {
+      		console.log('clicked');
+
+      	    //keywords = childSnapshot.val().keywords;
+
+      	   	var chosenComplaint = $(this).data('complaint');
+      	   	console.log(chosenComplaint);
+
+			// Find all dinosaurs that are at least three meters tall.
+			console.log(complaintCategory);
+			var ref = firebase.database().ref('complaints/' + complaintCategory);
+
+				ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
+			  	console.log(snapshot.key);
+			  	keywords = snapshot.val().keywords;
+			  	console.log(keywords);
+			  	//$('#modal2').html(keywords);
+			  	$('#modal2').openModal();
+			});
+      	   // console.log(keywords);
+      	   // search();
+      });
+
 
     });
 
+   $('#complaint-list').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal1">File a complaint</a></p>');
+
+   $('.modal-trigger').leanModal();
+
+	//$('footer').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal2">New modal</a></p>');
+
   });
+
   
   //Else if they 
 
@@ -82,7 +117,7 @@ $(document).ready(function(){
    $('#submit-complaint').on('click', function() {
     
       var complaint = $('#complaint').val();
-      var complaintKeywords = $('#keywords').val().trim().replace(/,/g, '').split(" ") + ', meme, ' + 'funny' ;
+      var complaintKeywords = $('#keywords').val().trim().replace(/,/g, '').split(" ") + 'funny' ;
     
       var newComplaint = {
         complaint: complaint,
@@ -148,7 +183,7 @@ $(document).ready(function(){
           $('#apiInfo').empty();
 
           //Add videos
-          $('#videoDiv').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + results2.items[results2Num].id.videoId + '?autoplay=1"></iframe>');
+          $('#videoDiv').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + results2.items[resultNum].id.videoId + '?autoplay=1"></iframe>');
 
           //Add buttons yes/no
           $('#apiInfo').append('Do you feel better yet?');
