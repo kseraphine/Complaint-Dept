@@ -6,6 +6,8 @@ var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + 
 var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
 var resultNum = 0;
 var level = 1;
+
+
 var yesBtn = $('<button id="yes">Yes</button>');
 var noBtn = $('<button id="no">No</button>');
 var level1 = [
@@ -49,6 +51,9 @@ $(document).ready(function(){
 
     //Add to firebase
 //Happens when they click complaint or after adding a complaint.
+
+  var usedImages = [];
+
   function search() {
     if (resultNum < 2) {
       $.ajax({ url: googlequeryURL, method: 'GET' })
@@ -59,25 +64,34 @@ $(document).ready(function(){
         $('#videoDiv').empty();
         $('#apiInfo').empty();
 
+        var n = Math.floor(Math.random() * 9);
+
+        while(usedImages.indexOf(n) != -1) {
+          n = Math.floor(Math.random() * 9);
+        }
+
+        usedImages.push(n);
+        var randomImg = results.items[n].link;
+        console.log("N=" + n);
         //Add image
-        $('#apiInfo').append('<img src="' + results.items[resultNum].link + '">');
+        $('#apiInfo').append('<img src="' + randomImg + '">');
 
         //Add the option to click yes or no, display button and text.
         $('#apiInfo').append('Do you feel better yet?');
-        $('#apiInfo').prepend(yesBtn, noBtn);
+        //$('#apiInfo').prepend(yesBtn, noBtn);
 
         resultNum++;
-
+        level++;
         console.log("ResultNum " + resultNum);
 
-        $('#no').on('click', function () {
+        $('#btnNo').on('click', function () {
           console.log("level " + level);
-          level++;
+          //level++
           search();
         });
 
-        //TODO: On YES click display text from array and return to main screen
-        $('#yes').on('click', function () {
+        //On YES click display text from array and return to main screen
+        $('#btnYes').on('click', function () {
           $('#apiInfo').empty();
           $('#videoDiv').empty();
           messages();
@@ -93,25 +107,28 @@ $(document).ready(function(){
           $('#videoDiv').empty();
           $('#apiInfo').empty();
 
+          var n2 = Math.floor(Math.random() * 4);
+          var randomVid = results2.items[n2].id.videoId;
+          console.log("N2=" + n2);
           //Add videos
-          $('#videoDiv').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + results2.items[resultNum].id.videoId + '?autoplay=1"></iframe>');
+          $('#videoDiv').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
 
           //Add buttons yes/no
           $('#apiInfo').append('Do you feel better yet?');
-          $('#apiInfo').prepend(yesBtn, noBtn);
+          //$('#apiInfo').prepend(yesBtn, noBtn);
 
           resultNum++;
 
           console.log("ResultNum " + resultNum);
 
-          $('#no').on('click', function () {
+          $('#btnNo').on('click', function () {
             $('#apiInfo').html('You have a major problem. Be careful out there.');
             $('#videoDiv').empty();
             level = 1;
           });
 
-          //TODO: On YES click display text from array and return to main screen
-          $('#yes').on('click', function () {
+          //On YES click display text from array and return to main screen
+          $('#btnYes').on('click', function () {
             $('#apiInfo').empty();
             $('#videoDiv').empty();
             messages();
