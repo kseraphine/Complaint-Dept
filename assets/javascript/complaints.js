@@ -18,10 +18,7 @@ var keywords;
 
 // How do we use the APIs?
 //var keywords = 'wife-funny-meme';
-var key = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
-var cx = '003192956300846753352:1j_2oos-ga0'
-var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + key + '&cx=' + cx + '&searchType=image&q=' + keywords;
-var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search';
+
 
 //var keywords = 'bad-boss-funny';
 var gKey = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
@@ -78,12 +75,17 @@ $(document).ready(function(){
 			var ref = firebase.database().ref('complaints/' + complaintCategory);
 
 				ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
-			  	console.log(snapshot.key);
-			  	keywords = snapshot.val().keywords;
-			  	console.log(keywords);
-			  	//$('#modal2').html(keywords);
-			  	$('#modal2').openModal();
-			});
+				  	console.log(snapshot.key);
+				  	keywords = snapshot.val().keywords;
+				  	console.log(keywords);
+					googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
+					youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+					console.log(googlequeryURL);
+				  	//$('#modal2').html(keywords);
+				  	$('#modal2').openModal();
+
+				  	
+				});
       	   // console.log(keywords);
       	   // search();
       });

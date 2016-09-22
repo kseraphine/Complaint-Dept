@@ -30,7 +30,9 @@ h6{
 	cursor: pointer;
 }
 
-
+#imageDiv img {
+	max-width: 500px;
+}
 
 label, input {
 	width: 100%;
