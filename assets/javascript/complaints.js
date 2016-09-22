@@ -22,8 +22,8 @@ var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey
 var resultNum = 0;
 var level = 1;
 var usedImages = [];
-//var yesBtn = $('<button id="yes">Yes</button>');
-//var noBtn = $('<button id="no">No</button>');
+var chosenComplaint;
+
 var complaintCategory;
 var level1 = [
   'Your problem isn\'t the problem your reaction is the problem.',
@@ -55,7 +55,28 @@ var level3 = ['Even bacon can\'t solve your problem!',
 $(document).ready(function(){
 
 	$(document).on('click', '.chosen-complaint', function(event) {
-		$(this)
+		chosenComplaint = $(this).data('complaint');
+		console.log(complaintCategory);
+		var ref = firebase.database().ref('complaints/' + complaintCategory);
+
+		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
+		  	console.log(snapshot.key);
+		  	keywords = snapshot.val().keywords;
+		  	console.log(keywords);
+			googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
+			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+			search();
+			console.log(googlequeryURL);
+		  	//$('#modal2').html(keywords);
+		  	$('#modal2').openModal({
+		  		 complete: function() { 
+		  		 	$('#imageDiv').empty 
+		  		 	$('#videoDiv').empty;
+
+		  		 } // Callback for Modal close
+    		});
+		});
+
 	});
 
 	//User clicks complaint category
@@ -76,28 +97,10 @@ $(document).ready(function(){
       		$('#complaint-list').append('<p class="chosen-complaint" data-complaint="' + currentComplaint + '">' + currentComplaint + '</p>');
 
 			//Click specific complaint from list
-	      	$('.chosen-complaint').on('click', function() {
-	      		console.log('clicked');
-
-	      	   	var chosenComplaint = $(this).data('complaint');
-	      	   	console.log(chosenComplaint);
-
-				// Find all dinosaurs that are at least three meters tall.
-				console.log(complaintCategory);
-				var ref = firebase.database().ref('complaints/' + complaintCategory);
-
-				ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
-				  	console.log(snapshot.key);
-				  	keywords = snapshot.val().keywords;
-				  	console.log(keywords);
-					googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-					youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
-					search();
-					console.log(googlequeryURL);
-				  	//$('#modal2').html(keywords);
-				  	$('#modal2').openModal();
+	      	//$('.chosen-complaint').on('click', function() {
+	      		
 				 
-				});
+			//	});
     
       });
 
@@ -108,8 +111,7 @@ $(document).ready(function(){
 
 	$('.modal-trigger').leanModal();
 
-  });
-
+  
 	//On click add a complaint
 
    $('#submit-complaint').on('click', function() {
@@ -141,13 +143,15 @@ $(document).ready(function(){
 
 	//Happens when they click complaint or after adding a complaint.
 	function search() {
+		$('.modal-footer').removeClass('display-none');
+
 	    if (resultNum < 2) {
 			$.ajax({ url: googlequeryURL, method: 'GET' })
 			.done(function (results) {
 			console.log("Images");
 			console.log(results);
 
-			$('#videoDiv').empty();
+			//$('#videoDiv').empty();
 			$('#apiInfo').empty();
 
 			var n = Math.floor(Math.random() * 9);
@@ -177,7 +181,7 @@ $(document).ready(function(){
 	        //On YES click display text from array and return to main screen
 	        $('#btnYes').on('click', function () {
 	          $('#apiInfo').empty();
-	          $('#videoDiv').empty();
+	          $('.modal-footer').addClass('display-none');
 	          messages();
 	          level = 0;
 	        });
@@ -188,33 +192,29 @@ $(document).ready(function(){
           console.log("Videos");
           console.log(results2);
 
-          $('#videoDiv').empty();
+          //$('#videoDiv').empty();
           $('#apiInfo').empty();
 
           var n2 = Math.floor(Math.random() * 4);
           var randomVid = results2.items[n2].id.videoId;
           console.log("N2=" + n2);
           //Add videos
-          $('#videoDiv').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
+          $('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
 
-          //Add buttons yes/no
-          $('#apiInfo').append('Do you feel better yet?');
-          //$('#apiInfo').prepend(yesBtn, noBtn);
-
-          resultNum++;
+           resultNum++;
 
           console.log("ResultNum " + resultNum);
 
           $('#btnNo').on('click', function () {
-            $('#apiInfo').html('You have a major problem. Be careful out there.');
-            $('#videoDiv').empty();
+            $('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
+			$('.modal-footer').addClass('display-none');
             level = 1;
           });
 
           //On YES click display text from array and return to main screen
           $('#btnYes').on('click', function () {
             $('#apiInfo').empty();
-            $('#videoDiv').empty();
+            $('.modal-footer').addClass('display-none');
             messages();
             level = 1;
           });
@@ -223,13 +223,13 @@ $(document).ready(function(){
   }
   function messages(){
     if (level == 1) {
-      $('#apiInfo').html(level1[Math.floor(Math.random() * level1.length)]);
+      $('#apiInfo').html('<h2>' + level1[Math.floor(Math.random() * level1.length)] + '</h2>');
     }else if (level == 2) {
-      $('#apiInfo').html(level2[Math.floor(Math.random() * level2.length)]);
+      $('#apiInfo').html('<h2>' + level2[Math.floor(Math.random() * level2.length)] + '</h2>');
     }else {
-      $('#apiInfo').html(level3[Math.floor(Math.random() * level3.length)]);
+      $('#apiInfo').html('<h2>' + level3[Math.floor(Math.random() * level3.length)] + '</h2>');
     }
   };
-  //search();
 
 });
+
