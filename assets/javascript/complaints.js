@@ -23,7 +23,6 @@ var resultNum = 0;
 var level = 1;
 var usedImages = [];
 var chosenComplaint;
-
 var complaintCategory;
 var level1 = [
   'Your problem isn\'t the problem your reaction is the problem.',
@@ -54,13 +53,13 @@ var level3 = ['Even bacon can\'t solve your problem!',
 
 $(document).ready(function(){
 
+	//Chose a complaint and begin search
 	$(document).on('click', '.chosen-complaint', function(event) {
 		chosenComplaint = $(this).data('complaint');
 		console.log(complaintCategory);
 		var ref = firebase.database().ref('complaints/' + complaintCategory);
 
 		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
-		  	console.log(snapshot.key);
 		  	keywords = snapshot.val().keywords;
 		  	console.log(keywords);
 			googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
@@ -70,8 +69,9 @@ $(document).ready(function(){
 		  	//$('#modal2').html(keywords);
 		  	$('#modal2').openModal({
 		  		 complete: function() { 
-		  		 	$('#imageDiv').empty 
-		  		 	$('#videoDiv').empty;
+		  		 	$('#apiInfo').empty;
+		  		 	resultNum = 0;
+					level = 1;
 
 		  		 } // Callback for Modal close
     		});
@@ -123,6 +123,8 @@ $(document).ready(function(){
         complaint: complaint,
         keywords: complaintKeywords,
       }
+
+
 
       if (complaintCategory == 'family') {
         database.ref('complaints/family').push(newComplaint);
