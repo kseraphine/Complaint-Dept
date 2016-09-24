@@ -149,7 +149,7 @@ $(document).ready(function(){
 	//Happens when they click complaint or after adding a complaint.
 	function search() {
 
-		$('#apiInfo').empty();
+		//$('#apiInfo').empty();
 		$('.modal-footer').removeClass('display-none');
 		googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
 		youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet&order=relevance&type=video&regionCode=US&relevanceLanguage=en&videoDuration=short&videoEmbeddable=true&q=' + keywords;
