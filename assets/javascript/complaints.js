@@ -14,7 +14,7 @@ var keywords;
 var gKey = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
 var yKey = 'AIzaSyBqbCIjRdfs4cyO4wbp1Mk0n7JERQpTGeY';
 var cx = '003192956300846753352:1j_2oos-ga0';
-var googlequeryURL; 
+var googlequeryURL;
 var youtubequeryURL;
 var resultNum = 0;
 var level = 1;
@@ -54,12 +54,11 @@ $(document).ready(function(){
 		chosenComplaint = $(this).data('complaint');
 
 		var ref = firebase.database().ref('complaints/' + complaintCategory);
-
-			ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
+		
+		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
 			keywords = snapshot.val().keywords.join('-');
 			
 			search();
-			
 		});
 	});
 
@@ -114,9 +113,7 @@ $(document).ready(function(){
 
 	});
 
-	//Add a complaint
-  // $('#submit-complaint').on('click', function() {
-    
+	//Add a complaint    
   	$('#new-complaint').submit(function( event ) {
 		//Get complaint value
 		var complaint = $('#complaint').val();
@@ -151,9 +148,10 @@ $(document).ready(function(){
 	//Happens when they click complaint or after adding a complaint.
 	function search() {
 
+		$('#apiInfo').empty();
 		$('.modal-footer').removeClass('display-none');
 		googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-		youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+		youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet&order=relevance&type=video&regionCode=US&relevanceLanguage=en&videoDuration=short&videoEmbeddable=true&q=' + keywords;
 
 	    if (resultNum < 2) {
 			$.ajax({ url: googlequeryURL, method: 'GET' })
@@ -173,28 +171,26 @@ $(document).ready(function(){
 		        var randomImg = results.items[n].link;
 		        
 		        //Display image
-		        $('#apiInfo').append('<img src="' + randomImg + '">');
+		        $('#apiInfo').html('<img src="' + randomImg + '">');
 
 		        resultNum++;
 				level++;
 
 	        });
 
-	    }else if (resultNum == 2) {
+    }else if (resultNum == 2) {
 
-	    	$.ajax({ url: youtubequeryURL, method: 'GET' })
-			.done(function (results2) {
-				
-				$('#apiInfo').empty();
-
-				//Randomly select video from 5 results
-				var n2 = Math.floor(Math.random() * 4);
-				var randomVid = results2.items[1].id.videoId;
-				
-				//Display random video
-				$('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
-				
-				resultNum++;			
+    	$.ajax({ url: youtubequeryURL, method: 'GET' })
+		.done(function (results2) {
+	
+			//Randomly select video from 5 results
+			var n2 = Math.floor(Math.random() * 4);
+			var randomVid = results2.items[1].id.videoId;
+			
+			//Display random video
+			$('#apiInfo').html('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
+			
+			resultNum++;			
 
 	        });
 	    };
@@ -203,7 +199,7 @@ $(document).ready(function(){
 	  	$('#modal2').openModal({
 	  		complete: function() { 
 	  		 	$('#apiInfo').empty();
-	  		 	resultNum = 0;
+				resultNum = 0;
 				level = 1;
 			} 
 		});  
@@ -223,4 +219,3 @@ $(document).ready(function(){
 	};
 
 });
-
