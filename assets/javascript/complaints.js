@@ -53,25 +53,27 @@ var level3 = ['Even bacon can\'t solve your problem!',
 
 $(document).ready(function(){
 
-	//Chose a complaint and begin search
+	//Chose a complaint to begin search
 	$(document).on('click', '.chosen-complaint', function(event) {
 		chosenComplaint = $(this).data('complaint');
-		console.log(complaintCategory);
+
 		var ref = firebase.database().ref('complaints/' + complaintCategory);
+
+		console.log('Chosen Complaint: ' + chosenComplaint);
+		console.log('Category: ' + complaintCategory);
 
 		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
 		  	keywords = snapshot.val().keywords.join('-');
-		  	console.log(keywords);
 			googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-			console.log("video keywords" + keywords);
-			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords[0] + '-' + keywords[1];
 			search();
 		  	
 		  	$('#modal2').openModal({
 		  		complete: function() { 
-		  		 	$('#apiInfo').empty;
+		  		 	$('#apiInfo').empty();
 		  		 	resultNum = 0;
 					level = 1;
+
 		  		} // Callback for Modal close
     		});
 		});
@@ -83,23 +85,15 @@ $(document).ready(function(){
 
 	    complaintCategory = $(this).attr('data-category');
 	    $('#complaint-list').empty();
-	    console.log('Category: ' + complaintCategory);
 
     	database.ref('complaints/' + complaintCategory).on("child_added", function(childSnapshot) {
 
       		var currentComplaint = childSnapshot.val().complaint;
 
-	    	console.log(currentComplaint);
 	    	$('#category').text(complaintCategory);
 
 			//Get complains for selected category
       		$('#complaint-list').append('<p class="chosen-complaint" data-complaint="' + currentComplaint + '">' + currentComplaint + '</p>');
-
-			//Click specific complaint from list
-	      	//$('.chosen-complaint').on('click', function() {
-	      		
-				 
-			//	});
     
       });
 
@@ -107,7 +101,6 @@ $(document).ready(function(){
 	});
 
 	$('#complaint-list').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal1">File a complaint</a></p>');
-
 	$('.modal-trigger').leanModal();
 
   
@@ -121,7 +114,7 @@ $(document).ready(function(){
       var newComplaint = {
         complaint: complaint,
         keywords: complaintKeywords,
-      }
+      };
 
       if (complaintCategory == 'family') {
         database.ref('complaints/family').push(newComplaint);
@@ -132,9 +125,6 @@ $(document).ready(function(){
       } else if (complaintCategory == 'weather') {
         database.ref('complaints/weather').push(newComplaint);
       };
-      console.log(newComplaint.complaint);
-      console.log(newComplaint.keywords);
-      console.log(complaintCategory);
 
 
   });
@@ -142,15 +132,13 @@ $(document).ready(function(){
 
 	//Happens when they click complaint or after adding a complaint.
 	function search() {
+
 		$('.modal-footer').removeClass('display-none');
 
 	    if (resultNum < 2) {
-	    	console.log('results number:' + resultNum);
 			$.ajax({ url: googlequeryURL, method: 'GET' })
 			.done(function (results) {
-			console.log("IMAGE RESULTS:");
-			console.log(results);
-
+			
 			$('#apiInfo').empty();
 
 			//Randomly select image from 10 results
@@ -189,21 +177,15 @@ $(document).ready(function(){
 	        });
       });
     }else if (resultNum == 2) {
-    	console.log('results number:' + resultNum);
     	$.ajax({ url: youtubequeryURL, method: 'GET' })
 		.done(function (results2) {
-			console.log("VIDEO RESULTS");
-			console.log('KEYWORDS: ' + keywords)
-			console.log(results2);
-
+			
 			$('#apiInfo').empty();
 
 			//Randomly select video from 5 results
 			var n2 = Math.floor(Math.random() * 4);
-			var randomVid = results2.items[n2].id.videoId;
-			console.log('test' + randomVid);
-			console.log("N2=" + n2);
-
+			var randomVid = results2.items[1].id.videoId;
+			
 			//Add videos
 			$('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
 
