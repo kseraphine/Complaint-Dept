@@ -8,20 +8,25 @@
   <link type="text/css" rel="stylesheet" href="assets/css/materialize.min.css"  media="screen,projection">
   <link type="text/css" rel="stylesheet" href="assets/css/style.css">
   <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+  
   <!-- JAVASCRIPT -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="assets/javascript/materialize.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/3.3.2/firebase.js"></script>
   <script src="assets/javascript/complaints.js"></script>
+  
 </head>
 
 <body>
   
-    <div class="plank"><h1><span class="text">The Complaint Department</span></h1></div>
+    <header>
+      <h1>The Complaint Department</h1>
+      <img src="assets/photos/lego-man-ch.png" class="lego-man">
+    </header>
       <div class="divider"></div>
-        <div class="section">
+        <div class="section instructions">
           <h6>Is something wrong in your life? In a bad mood? Need a little pick me up?</h6>
+          <p class="choose">Choose a Category:</p>
         </div>
       <div class="divider"></div>
 
@@ -31,30 +36,42 @@
     <a class="carousel-item" href="#three!" id="weather" data-category="weather"><h5>Weather</h5><img src="assets/photos/rain.jpg"></a>
     <a class="carousel-item" href="#four!" id="school" data-category="school"><h5>School</h5><img src="assets/photos/class2.jpg"></a>
   </div>
-  <div id="complaint-list"></div>
+  
+
+  <div class="row" id="complaint-tabs">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a class="active" href="#complaint-list">Choose a Complaint</a></li>
+        <li class="tab col s3"><a href="#add-complaint">File a Complaint</a></li>
+      </ul>
+    </div>
+    <div id="complaint-list" class="col s12"></div>
+    <div id="add-complaint" class="col s12">
+      <form id="new-complaint">
+      <p>Category: <span id="category"></span></p>
+      
+      <input type="text" id="complaint" required>
+      <label for="complaint">What is your complaint?</label>
+
+       <input type="text" id="keywords" required>
+      <label for="keywords">Add keywords to describe your complaint</label>
+     
+     <input type="email" name="email" id="email">
+      <label for="user-email">Your Email</label>
+      
+      <button type="submit" id="submit-complaint">Add Complaint</button>
+    </form>
+    </div>
+  </div>
 
   <footer class="page-footer">
     <div class="footer-copyright">
-      <div class="container">
-      © 2016 MARKELTAT Inc.
-      </div>
+      <div class="container">© 2016 MARKELTAT Inc.</div>
     </div>
   </footer>
 
   <!-- Modal Structure -->
-  <div id="modal1" class="modal">
-    <form id="new-complaint">
-      <p>Category: <span id="category"></span></p>
-      <label for="complaint">What is your complaint?</label>
-      <input type="text" id="complaint">
-      <label for="keywords">Add keywords to describe your complaint</label>
-      <input type="text" id="keywords">
-      <button id="submit-complaint">Add Complaint</button>
-      <label for="user-email">Your Email</label>
-      <input type="email" name="email" id="user-email">
-    </form>
-    <div class="modal-footer"></div>
-  </div>
+
   <div id="modal2" class="modal">
       <div id="apiInfo"></div>
       <div class="modal-footer">
@@ -64,9 +81,11 @@
       </div>
   </div>
 
+
 <!--Import jQuery before materialize.js-->
   <script>
     $('.carousel').carousel();
+    $('ul.tabs').tabs();
   </script>
 
 
