@@ -8,24 +8,20 @@ var config = {
 
 firebase.initializeApp(config);
 
+//Global variables
 var database = firebase.database();
-
-//global variables
-var category;
-var complaint;
 var keywords;
 var gKey = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
 var yKey = 'AIzaSyBqbCIjRdfs4cyO4wbp1Mk0n7JERQpTGeY';
 var cx = '003192956300846753352:1j_2oos-ga0';
-var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+var googlequeryURL; 
+var youtubequeryURL;
 var resultNum = 0;
 var level = 1;
 var usedImages = [];
 var chosenComplaint;
 var complaintCategory;
-var level1 = [
-  'Your problem isn\'t the problem your reaction is the problem.',
+var level1 = ['Your problem isn\'t the problem your reaction is the problem.',
   'Your problem is not knowing you\'re the problem',
   'Oh really? You know what that sounds like?   Not a problem',
   'I fail to see the problem here',
@@ -35,20 +31,20 @@ var level1 = [
   'Your problem is like  when your phone only charges if you angle and bend the cable a certain way',
 ];
 var level2 = ['The only way to deal with your problem is…order a pizza!',
-  'Alcohol probably won\'t fix your problems…but isn\'t it worth a shot or two?',
-  'Don\'t take life so seriously. You\'ll never get out of it alive',
-  'Always remember that you are absolutely unique, just like everyone else',
-  'Whatever your problem is the answer is not in the fridge',
-  'Face your problems\, don\'t facebook them',
-  'But did you die?',
+	'Alcohol probably won\'t fix your problems…but isn\'t it worth a shot or two?',
+	'Don\'t take life so seriously. You\'ll never get out of it alive',
+	'Always remember that you are absolutely unique, just like everyone else',
+	'Whatever your problem is the answer is not in the fridge',
+	'Face your problems\, don\'t facebook them',
+	'But did you die?',
 ];
 var level3 = ['Even bacon can\'t solve your problem!',
-  'You\'ve got 99 problems…',
-  'Running away from your problems counts as exercising.',
-  'Whoooa',
-  'It\'s time to relax',
-  'Keep calm and chill',
-  'Just relax and accept the crazy',
+	'You\'ve got 99 problems…',
+	'Running away from your problems counts as exercising.',
+	'Whoooa',
+	'It\'s time to relax',
+	'Keep calm and chill',
+	'Just relax and accept the crazy',
 ];
 
 $(document).ready(function(){
@@ -57,51 +53,79 @@ $(document).ready(function(){
 	$(document).on('click', '.chosen-complaint', function(event) {
 		chosenComplaint = $(this).data('complaint');
 
-		var ref = firebase.database().ref('complaints/' + complaintCategory);
-
 		console.log('Chosen Complaint: ' + chosenComplaint);
 		console.log('Category: ' + complaintCategory);
+		
+		startComplaint();
+	});
+
+	function startComplaint() {
+		var ref = firebase.database().ref('complaints/' + complaintCategory);
 
 		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
-		  	keywords = snapshot.val().keywords.join('-');
-			googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords[0] + '-' + keywords[1];
+			keywords = snapshot.val().keywords.join('-');
+			
 			search();
-		  	
+
+		  	// Callback for Modal close
 		  	$('#modal2').openModal({
 		  		complete: function() { 
 		  		 	$('#apiInfo').empty();
 		  		 	resultNum = 0;
 					level = 1;
-
-		  		} // Callback for Modal close
-    		});
+				} 
+			});
 		});
+};
+
+	//Click NO button 
+	$(document).on('click', '#btnNo', function(event) {
+		
+		if (resultNum < 3) {
+			search();
+		} else {
+			$('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
+			$('.modal-footer').addClass('display-none');
+			level = 1;
+			resultNum = 0;
+		};
 
 	});
 
-	//User clicks complaint category
+	//Click YES button
+	$(document).on('click', '#btnYes', function(event) {
+
+		//CLick YES – display text from array and return to main screen
+    	$('.modal-footer').addClass('display-none');
+      	$('#apiInfo').empty();
+		messages();
+		level = 1;
+		resultNum = 0;
+
+	});
+
+	//Click category – display coomplaints
 	$('.carousel-item').on('click', function() {
 
 	    complaintCategory = $(this).attr('data-category');
 	    $('#complaint-list').empty();
 
+    	//find complaints for specific 
     	database.ref('complaints/' + complaintCategory).on("child_added", function(childSnapshot) {
 
       		var currentComplaint = childSnapshot.val().complaint;
-
 	    	$('#category').text(complaintCategory);
 
-			//Get complains for selected category
+			//Display list of complaints
       		$('#complaint-list').append('<p class="chosen-complaint" data-complaint="' + currentComplaint + '">' + currentComplaint + '</p>');
-    
-      });
 
+      	});
+	    	$('#complaint-list').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal1">File a complaint</a></p>');
+			$('.modal-trigger').leanModal();
 
 	});
 
-	$('#complaint-list').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal1">File a complaint</a></p>');
-	$('.modal-trigger').leanModal();
+	
 
   
 	//On click add a complaint
@@ -132,51 +156,41 @@ $(document).ready(function(){
 
 	//Happens when they click complaint or after adding a complaint.
 	function search() {
-
 		$('.modal-footer').removeClass('display-none');
+		googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
+		youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+		console.log(googlequeryURL);
+		console.log(youtubequeryURL);
+
+		console.log('resultNum: ' + resultNum);
 
 	    if (resultNum < 2) {
 			$.ajax({ url: googlequeryURL, method: 'GET' })
 			.done(function (results) {
 			
-			$('#apiInfo').empty();
+				$('#apiInfo').empty();
 
-			//Randomly select image from 10 results
-			var n = Math.floor(Math.random() * 9);
+				//Randomly select image from 10 results
+				var n = Math.floor(Math.random() * 9);
 
-			//Don't repeat images in one session
-			while(usedImages.indexOf(n) != -1) {
-			  n = Math.floor(Math.random() * 9);
-			}
+				//Don't repeat images in one session
+				while(usedImages.indexOf(n) != -1) {
+				  n = Math.floor(Math.random() * 9);
+				}
 
-	        usedImages.push(n);
-	        var randomImg = results.items[n].link;
-	        
-	        //Display image
-	        $('#apiInfo').append('<img src="' + randomImg + '">');
-
-	        resultNum++;
-		    level++;
-	       
-
-	        //Click no button
-	        $('#btnNo').on('click', function () {
-	        	//Update result and level for message
+		        usedImages.push(n);
+		        var randomImg = results.items[n].link;
 		        
-	          	search();
+		        //Display image
+		        $('#apiInfo').append('<img src="' + randomImg + '">');
+
+		        resultNum++;
+				level++;
+
 	        });
 
-	        //CLick YES – display text from array and return to main screen
-	        $('#btnYes').on('click', function () {
-	        	$('.modal-footer').addClass('display-none');
-	          	$('#apiInfo').empty();
-				
-				messages();
-				level = 1;
-				resultNum = 0;
-	        });
-      });
     }else if (resultNum == 2) {
+
     	$.ajax({ url: youtubequeryURL, method: 'GET' })
 		.done(function (results2) {
 			
@@ -186,31 +200,16 @@ $(document).ready(function(){
 			var n2 = Math.floor(Math.random() * 4);
 			var randomVid = results2.items[1].id.videoId;
 			
-			//Add videos
+			//Display random video
 			$('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
+			
+			resultNum++;			
 
-			//resultNum++;
-
-			//Click NO button 
-			$('#btnNo').on('click', function () {
-				$('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
-				$('.modal-footer').addClass('display-none');
-				level = 1;
-				resultNum = 0;
-			});
-
-			//On YES click display text from array and return to main screen
-			$('#btnYes').on('click', function () {
-				$('#apiInfo').empty();
-				$('.modal-footer').addClass('display-none');
-				
-				messages();
-				level = 1;
-				resultNum = 0;
-          });
         });
     }
   }
+  
+  //Display random message from arrays based on level
   function messages(){
     if (level == 1) {
       $('#apiInfo').html('<h2>' + level1[Math.floor(Math.random() * level1.length)] + '</h2>');
@@ -218,7 +217,7 @@ $(document).ready(function(){
       $('#apiInfo').html('<h2>' + level2[Math.floor(Math.random() * level2.length)] + '</h2>');
     }else {
       $('#apiInfo').html('<h2>' + level3[Math.floor(Math.random() * level3.length)] + '</h2>');
-    }
+    };
   };
 
 });
