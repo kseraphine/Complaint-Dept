@@ -40,18 +40,19 @@ h6{
 
 }
 h1 {
+	position: relative;
 	margin:0;
 	text-align: center;
 	padding: 50px 0;
 	color: #1c1105;
-	 text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
-
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+	z-index: 10;
 }
 h6 {text-align: center;}
 
 .carousel{
   text-align: center;
-  margin-top: -100px
+  margin-top: -75px
 }
 .carousel img{
   height: 200px;
@@ -64,16 +65,42 @@ footer.page-footer{
 div.card-panel{
   /* background-image: url('../photos/wood.jpg'); */
 }
-#complaint-list {
-	margin-top: -50px;
-    padding: 1em;
-    background-color: #ccc;
+#complaint-tabs {
+	max-width: 700px;
+	margin: -50px auto 0;
+	display: none;
+}
+#complaint-list, #add-complaint {
+    padding: 2em 0;
+    background-color: #f2f2f2;
+    /*background-color: #ccc;
     z-index: 100;
 	position: relative;
+	max-width: 700px;
+	margin: -50px auto 0;*/
 }
-#complaint-list p {
+.tabs .tab a {
+	color: #363636;
+}
+.tabs .tab a:hover {
+	color: #ccc;
+}
+#complaint-list p, #new-complaint p {
 	text-align: center;
 	cursor: pointer;
+	font-size: 1.25em;
+	color: #363636;
+}
+.tabs .indicator {
+	display: none;
+	color: #26a69a;
+}
+.tab {
+	border-top-right-radius: 10px;
+	border-top-left-radius: 10px;
+}
+.tabs .active {
+	background-color: #f2f2f2;
 }
 
 #apiInfo img {
@@ -87,18 +114,27 @@ label, input {
 	width: 100%;
 	margin: 10px 0;
 	font-family: arial, sans-serf;
+	font-size: 1.25em;
 }
-input {
+input[type=text], input[type=email]  {
 	min-height: 30px;
-	margin-bottom: 1em;
-
+	margin-top: 1em;
 }
-
 button {
 	text-transform: uppercase;
+	margin-top: .5em; 
 	padding: 10px 20px;
 	background-color: #ccc;
 	border: none;
+}
+form button {
+	display: block;
+	text-transform: uppercase;
+	margin: .5em auto; 
+	padding: 10px 20px;
+	background-color: #ccc;
+	border: none;
+	clear: both;
 }
 #new-complaint {
 	padding: .5em;
@@ -116,10 +152,33 @@ button {
 }
 .modal {
 	max-height: 87%!important;
+
 }
 .display-none {
 	display: none!important;
 }
 .display-block {
-	display: block;
+	display: block!important;
+}
+.choose {
+	text-align: center;
+	font-size: 1.25em;
+	text-transform: uppercase;
+}
+.lego-man {
+	width: auto!important;
+    height: 175px!important;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+}
+#apiInfo h2 {
+	margin-bottom: 150px;
+}
+.instructions {
+	background-color: #f3d032;
+}
+header {
+	position: relative;
+	z-index: 0;
 }

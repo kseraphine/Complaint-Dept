@@ -53,30 +53,15 @@ $(document).ready(function(){
 	$(document).on('click', '.chosen-complaint', function(event) {
 		chosenComplaint = $(this).data('complaint');
 
-		console.log('Chosen Complaint: ' + chosenComplaint);
-		console.log('Category: ' + complaintCategory);
-		
-		startComplaint();
-	});
-
-	function startComplaint() {
 		var ref = firebase.database().ref('complaints/' + complaintCategory);
 
-		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
+			ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
 			keywords = snapshot.val().keywords.join('-');
 			
 			search();
-
-		  	// Callback for Modal close
-		  	$('#modal2').openModal({
-		  		complete: function() { 
-		  		 	$('#apiInfo').empty();
-		  		 	resultNum = 0;
-					level = 1;
-				} 
-			});
+			
 		});
-};
+	});
 
 	//Click NO button 
 	$(document).on('click', '#btnNo', function(event) {
@@ -85,11 +70,11 @@ $(document).ready(function(){
 			search();
 		} else {
 			$('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
+			$('#apiInfo').append('<img src="assets/photos/lego-man.png" class="lego-man">');
 			$('.modal-footer').addClass('display-none');
 			level = 1;
 			resultNum = 0;
 		};
-
 	});
 
 	//Click YES button
@@ -99,18 +84,20 @@ $(document).ready(function(){
     	$('.modal-footer').addClass('display-none');
       	$('#apiInfo').empty();
 		messages();
+		$('#apiInfo').append('<img src="assets/photos/lego-man-hd.png" class="lego-man">');
 		level = 1;
 		resultNum = 0;
-
 	});
 
 	//Click category – display coomplaints
 	$('.carousel-item').on('click', function() {
 
+
+
 	    complaintCategory = $(this).attr('data-category');
 	    $('#complaint-list').empty();
 
-    	//find complaints for specific 
+    	//find complaints for specific category 
     	database.ref('complaints/' + complaintCategory).on("child_added", function(childSnapshot) {
 
       		var currentComplaint = childSnapshot.val().complaint;
@@ -120,49 +107,53 @@ $(document).ready(function(){
       		$('#complaint-list').append('<p class="chosen-complaint" data-complaint="' + currentComplaint + '">' + currentComplaint + '</p>');
 
       	});
-	    	$('#complaint-list').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal1">File a complaint</a></p>');
-			$('.modal-trigger').leanModal();
+
+      	$('#complaint-tabs').addClass('display-block');
+	    	//$('#complaint-list').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal1">File a complaint</a></p>');
+			//$('.modal-trigger').leanModal();
 
 	});
 
-	
-
-  
-	//On click add a complaint
-
-   $('#submit-complaint').on('click', function() {
+	//Add a complaint
+  // $('#submit-complaint').on('click', function() {
     
-      var complaint = $('#complaint').val();
-      var complaintKeywords = $('#keywords').val().trim().replace(/,/g, '').split(" ") + 'funny' ;
-    
-      var newComplaint = {
-        complaint: complaint,
-        keywords: complaintKeywords,
-      };
+  	$('#new-complaint').submit(function( event ) {
+		//Get complaint value
+		var complaint = $('#complaint').val();
+		var complaintKeywords = $('#keywords').val().trim().replace(/ /g, '').split(',');
+		var email = $('#email').val();
+		  
+		var newComplaint = {
+			complaint: complaint,
+			keywords: complaintKeywords,
+			userEmail: email
+		};
 
-      if (complaintCategory == 'family') {
-        database.ref('complaints/family').push(newComplaint);
-      } else if (complaintCategory == 'job') {
-        database.ref('complaints/job').push(newComplaint);
-      } else if (complaintCategory == 'school') {
-        database.ref('complaints/school').push(newComplaint);
-      } else if (complaintCategory == 'weather') {
-        database.ref('complaints/weather').push(newComplaint);
-      };
+		if (complaintCategory == 'family') {
+			database.ref('complaints/family').push(newComplaint);
+		} else if (complaintCategory == 'job') {
+			database.ref('complaints/job').push(newComplaint);
+		} else if (complaintCategory == 'school') {
+			database.ref('complaints/school').push(newComplaint);
+		} else if (complaintCategory == 'weather') {
+			database.ref('complaints/weather').push(newComplaint);
+		};
 
+		chosenComplaint = newComplaint.complaint;
+		keywords = newComplaint.keywords.join('-') + '-funny';
+	 
+	 	$('#new-complaint').children('input').val('')
 
-  });
+		search();
+	});
 
 
 	//Happens when they click complaint or after adding a complaint.
 	function search() {
+
 		$('.modal-footer').removeClass('display-none');
 		googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
 		youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
-		console.log(googlequeryURL);
-		console.log(youtubequeryURL);
-
-		console.log('resultNum: ' + resultNum);
 
 	    if (resultNum < 2) {
 			$.ajax({ url: googlequeryURL, method: 'GET' })
@@ -189,36 +180,47 @@ $(document).ready(function(){
 
 	        });
 
-    }else if (resultNum == 2) {
+	    }else if (resultNum == 2) {
 
-    	$.ajax({ url: youtubequeryURL, method: 'GET' })
-		.done(function (results2) {
-			
-			$('#apiInfo').empty();
+	    	$.ajax({ url: youtubequeryURL, method: 'GET' })
+			.done(function (results2) {
+				
+				$('#apiInfo').empty();
 
-			//Randomly select video from 5 results
-			var n2 = Math.floor(Math.random() * 4);
-			var randomVid = results2.items[1].id.videoId;
-			
-			//Display random video
-			$('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
-			
-			resultNum++;			
+				//Randomly select video from 5 results
+				var n2 = Math.floor(Math.random() * 4);
+				var randomVid = results2.items[1].id.videoId;
+				
+				//Display random video
+				$('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
+				
+				resultNum++;			
 
-        });
-    }
-  }
+	        });
+	    };
+   
+	   	//Start complaints
+	  	$('#modal2').openModal({
+	  		complete: function() { 
+	  		 	$('#apiInfo').empty();
+	  		 	resultNum = 0;
+				level = 1;
+			} 
+		});  
+  	};
   
   //Display random message from arrays based on level
-  function messages(){
-    if (level == 1) {
-      $('#apiInfo').html('<h2>' + level1[Math.floor(Math.random() * level1.length)] + '</h2>');
-    }else if (level == 2) {
-      $('#apiInfo').html('<h2>' + level2[Math.floor(Math.random() * level2.length)] + '</h2>');
-    }else {
-      $('#apiInfo').html('<h2>' + level3[Math.floor(Math.random() * level3.length)] + '</h2>');
-    };
-  };
+  
+	function messages(){
+
+		if (level == 1) {
+			$('#apiInfo').html('<h2>' + level1[Math.floor(Math.random() * level1.length)] + '</h2>');
+		}else if (level == 2) {
+			$('#apiInfo').html('<h2>' + level2[Math.floor(Math.random() * level2.length)] + '</h2>');
+		}else {
+			$('#apiInfo').html('<h2>' + level3[Math.floor(Math.random() * level3.length)] + '</h2>');
+		};
+	};
 
 });
 
