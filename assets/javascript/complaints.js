@@ -174,6 +174,7 @@ $(document).ready(function(){
 	        //Click no button
 	        $('#btnNo').on('click', function () {
 	        	//Update result and level for message
+		        
 	          	search();
 	        });
 
