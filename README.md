@@ -1,64 +1,32 @@
-Project Title
+# Project Title
+
+The Complaint Department will be a website to help cheer up users based on their complaint of the day.
+
+## Screenshots
+
+## Built With / Technology
+
+- HTML5
+- CSS5
+- JavaScript
+- jQuery
+– Firebase
+– Materialize
+– Google Search API
+– YouTube API
 
 
-Screenshots
+## Authors
 
-Include a one or two screenshots of main UI/UX points of your app and how it solves a problem
+* **Tatiana Wilcox**
+* **Kelana Latimer**
+* **Maria Beane**
 
-Technologies used
+## Project Description:
+The Complaint Department will be a website to help cheer up users based on their complaint of the day.
 
-You can give a brief listing of the technologies you've learned and applied here
+Users will enter the index page and select from a predefined list of categories which will include Weather, Family, Job, and School. Each category contains a list of a few preselected complaints and an option add a complaint.
 
-node.js
-Express
-Handblebars
-mongodb
-Getting Started
+When the user selects a complaint, a photo, video, or meme will will display showing content related to the complaint. The media will be funny in nature and is meant to make the user feel better. After each round of media displayed, the user will be asked if they feel better. If the user selects no, another photo or video will be displayed. If the user selects yes, a funny message will display showing the seriousness of the complaint. In example, if user feels better after the initial media, then the problem was not that big. A funny message will display like “That’s small potatoes. There are children starving out there.”.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
-Prerequisities
-
-What to install and how for local development and testing purposes
-
-- node.js: visit node.js and download...
-- mongodb: npm install -g mongodb
-- mysqldb: brew install mysql
-- jasmine: npm i -g jasmine
-Running the tests
-
-Explain how to run the automated tests for this system (if applicable)
-
-jasmine
-
-jasmine spec/appSpec.js
-Built With
-
-Atom - Sublime Text is pretty cool too I guess
-Balsamiq - Wireframe of choice
-RoboMongo - Because .pretty() everything is tedious
-Walk throughs of code
-
-For Project presentation, you can include snippets of code you found buggy, interesting, or are overall proud of here. Try to limit the quantity and size to quick readable bits.
-
-You can also show where you've used technologies you've learned and applied here.
-
-function awesomeThing() {
-//...
-// try not to make it too long otherwise, point to filepaths:line numbers
-//...
-}
-Authors
-
-John Doe - Initial work - John Doe
-See also the list of contributors who participated in this project.
-
-License
-
-This project is licensed under the MIT License - see the LICENSE.md file for details
-
-Acknowledgments
-
-Hat tip to anyone who's code was used
-Inspiration
-etc
+If the user’s problem is not available under the category, then they can add a complaint. When adding a complaint, the user is prompted to include a short complaint description and keywords that will be used to search for related media. The problem will then be added to the category and the media will begin to display.

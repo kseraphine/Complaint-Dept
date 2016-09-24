@@ -115,6 +115,7 @@ $(document).ready(function(){
 
 	//Add a complaint    
   	$('#new-complaint').submit(function( event ) {
+		
 		//Get complaint value
 		var complaint = $('#complaint').val();
 		var complaintKeywords = $('#keywords').val().trim().replace(/ /g, '').split(',');
