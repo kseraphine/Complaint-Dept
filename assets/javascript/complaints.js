@@ -17,8 +17,8 @@ var keywords;
 var gKey = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
 var yKey = 'AIzaSyBqbCIjRdfs4cyO4wbp1Mk0n7JERQpTGeY';
 var cx = '003192956300846753352:1j_2oos-ga0';
-var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+var googlequeryURL;
+var youtubequeryURL;
 var resultNum = 0;
 var level = 1;
 var usedImages = [];
@@ -64,11 +64,11 @@ $(document).ready(function(){
 		  	console.log(keywords);
 			googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
 			console.log("video keywords" + keywords);
-			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet&order=relevance&type=video&regionCode=US&relevanceLanguage=en&videoDuration=short&videoEmbeddable=true&q=' + keywords;
 			search();
-		  	
+
 		  	$('#modal2').openModal({
-		  		complete: function() { 
+		  		complete: function() {
 		  		 	$('#apiInfo').empty;
 		  		 	resultNum = 0;
 					level = 1;
@@ -97,10 +97,10 @@ $(document).ready(function(){
 
 			//Click specific complaint from list
 	      	//$('.chosen-complaint').on('click', function() {
-	      		
-				 
+
+
 			//	});
-    
+
       });
 
 
@@ -110,14 +110,14 @@ $(document).ready(function(){
 
 	$('.modal-trigger').leanModal();
 
-  
+
 	//On click add a complaint
 
    $('#submit-complaint').on('click', function() {
-    
+
       var complaint = $('#complaint').val();
       var complaintKeywords = $('#keywords').val().trim().replace(/,/g, '').split(" ") + 'funny' ;
-    
+
       var newComplaint = {
         complaint: complaint,
         keywords: complaintKeywords,
@@ -163,18 +163,18 @@ $(document).ready(function(){
 
 	        usedImages.push(n);
 	        var randomImg = results.items[n].link;
-	        
+
 	        //Display image
 	        $('#apiInfo').append('<img src="' + randomImg + '">');
 
 	        resultNum++;
 		    level++;
-	       
+
 
 	        //Click no button
 	        $('#btnNo').on('click', function () {
 	        	//Update result and level for message
-		        
+
 	          	search();
 	        });
 
@@ -182,7 +182,7 @@ $(document).ready(function(){
 	        $('#btnYes').on('click', function () {
 	        	$('.modal-footer').addClass('display-none');
 	          	$('#apiInfo').empty();
-				
+
 				messages();
 				level = 1;
 				resultNum = 0;
@@ -209,7 +209,7 @@ $(document).ready(function(){
 
 			//resultNum++;
 
-			//Click NO button 
+			//Click NO button
 			$('#btnNo').on('click', function () {
 				$('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
 				$('.modal-footer').addClass('display-none');
@@ -221,7 +221,7 @@ $(document).ready(function(){
 			$('#btnYes').on('click', function () {
 				$('#apiInfo').empty();
 				$('.modal-footer').addClass('display-none');
-				
+
 				messages();
 				level = 1;
 				resultNum = 0;
@@ -240,4 +240,3 @@ $(document).ready(function(){
   };
 
 });
-
