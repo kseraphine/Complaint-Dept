@@ -1,9 +1,9 @@
-var keywords = 'red-yellow-blue';
+var keywords = 'bad-boss-funny';
 var gKey = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
 var yKey = 'AIzaSyBqbCIjRdfs4cyO4wbp1Mk0n7JERQpTGeY';
 var cx = '003192956300846753352:1j_2oos-ga0';
-var googlequeryURL //= 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-var youtubequeryURL //= 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
+var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
 var resultNum = 0;
 var level = 1;
 
@@ -78,7 +78,7 @@ $(document).ready(function(){
 
         //Add the option to click yes or no, display button and text.
         $('#apiInfo').append('Do you feel better yet?');
-        //$('#apiInfo').prepend(yesBtn, noBtn);
+        $('#apiInfo').prepend(yesBtn, noBtn);
 
         resultNum++;
         level++;

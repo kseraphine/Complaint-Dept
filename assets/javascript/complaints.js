@@ -141,7 +141,7 @@ $(document).ready(function(){
 
 
 	//Happens when they click complaint or after adding a complaint.
-	function search(keywords) {
+	function search() {
 		$('.modal-footer').removeClass('display-none');
 
 	    if (resultNum < 2) {
@@ -174,7 +174,6 @@ $(document).ready(function(){
 	        //Click no button
 	        $('#btnNo').on('click', function () {
 	        	//Update result and level for message
-		        
 	          	search();
 	        });
 
