@@ -1,10 +1,7 @@
 body{
-  background-image: url("assets/photos/wood.jpg");
 }
-
-img{
-  height: 200px;
-  width: 100%;
+img {
+	max-width: 100%;
 }
 
 h5{
@@ -30,18 +27,98 @@ h6{
   text-align: center;
 }
 
-.card-panel{
+.plank{
     color: black;
-    background-image: url("assets/photos/wood.jpg");
+
+    //background-image: url('../photos/plank.jpg');
+    background-size: 100% auto; 
+    background-repeat: no-repeat;
+    width: 90%;
+    max-width: 700px;
+    top: 0;
+    margin: 0 auto;
+
 }
+h1 {
+	margin:0;
+	text-align: center;
+	padding: 50px 0;
+	color: #1c1105;
+	 text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+
+}
+h6 {text-align: center;}
 
 .carousel{
   text-align: center;
+  margin-top: -100px
+}
+.carousel img{
+  height: 200px;
+  width: 200px;
 }
 
 footer.page-footer{
   background-color: #212121;
 }
 div.card-panel{
-  background-image: url("assets/photos/wood.jpg");
+  /* background-image: url('../photos/wood.jpg'); */
+}
+#complaint-list {
+	margin-top: -50px;
+    padding: 1em;
+    background-color: #ccc;
+    z-index: 100;
+	position: relative;
+}
+#complaint-list p {
+	text-align: center;
+	cursor: pointer;
+}
+
+#apiInfo img {
+	max-height: 500px;
+}
+#apiInfo h2 {
+	padding: 1em 0;
+}
+label, input {
+	width: 100%;
+	margin: 10px 0;
+	font-family: arial, sans-serf;
+}
+input {
+	min-height: 30px;
+	margin-bottom: 1em;
+
+}
+
+button {
+	text-transform: uppercase;
+	padding: 10px 20px;
+	background-color: #ccc;
+	border: none;
+}
+#new-complaint {
+	padding: .5em;
+	max-width: 500px;
+	margin: auto;
+}
+.modal-footer {
+	background-color: #f2f2f2!important;
+	text-align: center;
+	height: auto!important;
+}
+#modal2 {
+	text-align: center;
+	padding: 1.5%!important;
+}
+.modal {
+	max-height: 87%!important;
+}
+.display-none {
+	display: none!important;
+}
+.display-block {
+	display: block;
 }

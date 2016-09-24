@@ -1,15 +1,29 @@
-var keywords = 'bad-boss-funny';
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyD2Ei8oCdvJf4h6gl2Bg0VJs4jB8ypxsEg",
+  authDomain: "complaintdepartment-e7321.firebaseapp.com",
+  databaseURL: "https://complaintdepartment-e7321.firebaseio.com",
+  storageBucket: "complaintdepartment-e7321.appspot.com",
+};
+
+firebase.initializeApp(config);
+
+var database = firebase.database();
+
+//global variables
+var category;
+var complaint;
+var keywords;
 var gKey = 'AIzaSyB-LwbjvB0YnRRuGl-dV3VGGx66ujm-fck';
 var yKey = 'AIzaSyBqbCIjRdfs4cyO4wbp1Mk0n7JERQpTGeY';
 var cx = '003192956300846753352:1j_2oos-ga0';
-var googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
-var youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
+var googlequeryURL;
+var youtubequeryURL;
 var resultNum = 0;
 var level = 1;
-
-
-var yesBtn = $('<button id="yes">Yes</button>');
-var noBtn = $('<button id="no">No</button>');
+var usedImages = [];
+var chosenComplaint;
+var complaintCategory;
 var level1 = [
   'Your problem isn\'t the problem your reaction is the problem.',
   'Your problem is not knowing you\'re the problem',
@@ -37,115 +51,192 @@ var level3 = ['Even bacon can\'t solve your problem!',
   'Just relax and accept the crazy',
 ];
 
-//Add firebase and setup initial database
-
 $(document).ready(function(){
-//They click on a complaint category
-  //Maria - If they click a complaint call search.
-    //Get keywords from firebase
 
-  //Maria - Else if they add a complaint add it, then call search.
-    //Bring up a modal
+	//Chose a complaint and begin search
+	$(document).on('click', '.chosen-complaint', function(event) {
+		chosenComplaint = $(this).data('complaint');
+		console.log(complaintCategory);
+		var ref = firebase.database().ref('complaints/' + complaintCategory);
 
-    //User enters description and keywords
+		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
+		  	keywords = snapshot.val().keywords.join('-');
+		  	console.log(keywords);
+			googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
+			console.log("video keywords" + keywords);
+			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet&order=relevance&type=video&regionCode=US&relevanceLanguage=en&videoDuration=short&videoEmbeddable=true&q=' + keywords;
+			search();
 
-    //Add to firebase
-//Happens when they click complaint or after adding a complaint.
+		  	$('#modal2').openModal({
+		  		complete: function() {
+		  		 	$('#apiInfo').empty;
+		  		 	resultNum = 0;
+					level = 1;
+		  		} // Callback for Modal close
+    		});
+		});
 
-  var usedImages = [];
+	});
 
-  function search() {
-    if (resultNum < 2) {
-      $.ajax({ url: googlequeryURL, method: 'GET' })
-      .done(function (results) {
-        console.log("Images");
-        console.log(results);
+	//User clicks complaint category
+	$('.carousel-item').on('click', function() {
 
-        $('#videoDiv').empty();
-        $('#apiInfo').empty();
+	    complaintCategory = $(this).attr('data-category');
+	    $('#complaint-list').empty();
+	    console.log('Category: ' + complaintCategory);
 
-        var n = Math.floor(Math.random() * 9);
+    	database.ref('complaints/' + complaintCategory).on("child_added", function(childSnapshot) {
 
-        while(usedImages.indexOf(n) != -1) {
-          n = Math.floor(Math.random() * 9);
-        }
+      		var currentComplaint = childSnapshot.val().complaint;
 
-        usedImages.push(n);
-        var randomImg = results.items[n].link;
-        console.log("N=" + n);
-        //Add image
-        $('#apiInfo').append('<img src="' + randomImg + '">');
+	    	console.log(currentComplaint);
+	    	$('#category').text(complaintCategory);
 
-        //Add the option to click yes or no, display button and text.
-        $('#apiInfo').append('Do you feel better yet?');
-        //$('#apiInfo').prepend(yesBtn, noBtn);
+			//Get complains for selected category
+      		$('#complaint-list').append('<p class="chosen-complaint" data-complaint="' + currentComplaint + '">' + currentComplaint + '</p>');
 
-        resultNum++;
-        level++;
-        console.log("ResultNum " + resultNum);
+			//Click specific complaint from list
+	      	//$('.chosen-complaint').on('click', function() {
 
-        $('#btnNo').on('click', function () {
-          console.log("level " + level);
-          //level++
-          search();
-        });
 
-        //On YES click display text from array and return to main screen
-        $('#btnYes').on('click', function () {
-          $('#apiInfo').empty();
-          $('#videoDiv').empty();
-          messages();
-          level = 0;
-        });
+			//	});
+
+      });
+
+
+	});
+
+	$('#complaint-list').append('<p><a class="waves-effect waves-light modal-trigger" href="#modal1">File a complaint</a></p>');
+
+	$('.modal-trigger').leanModal();
+
+
+	//On click add a complaint
+
+   $('#submit-complaint').on('click', function() {
+
+      var complaint = $('#complaint').val();
+      var complaintKeywords = $('#keywords').val().trim().replace(/,/g, '').split(" ") + 'funny' ;
+
+      var newComplaint = {
+        complaint: complaint,
+        keywords: complaintKeywords,
+      }
+
+      if (complaintCategory == 'family') {
+        database.ref('complaints/family').push(newComplaint);
+      } else if (complaintCategory == 'job') {
+        database.ref('complaints/job').push(newComplaint);
+      } else if (complaintCategory == 'school') {
+        database.ref('complaints/school').push(newComplaint);
+      } else if (complaintCategory == 'weather') {
+        database.ref('complaints/weather').push(newComplaint);
+      };
+      console.log(newComplaint.complaint);
+      console.log(newComplaint.keywords);
+      console.log(complaintCategory);
+
+
+  });
+
+
+	//Happens when they click complaint or after adding a complaint.
+	function search() {
+		$('.modal-footer').removeClass('display-none');
+
+	    if (resultNum < 2) {
+	    	console.log('results number:' + resultNum);
+			$.ajax({ url: googlequeryURL, method: 'GET' })
+			.done(function (results) {
+			console.log("IMAGE RESULTS:");
+			console.log(results);
+
+			$('#apiInfo').empty();
+
+			//Randomly select image from 10 results
+			var n = Math.floor(Math.random() * 9);
+
+			//Don't repeat images in one session
+			while(usedImages.indexOf(n) != -1) {
+			  n = Math.floor(Math.random() * 9);
+			}
+
+	        usedImages.push(n);
+	        var randomImg = results.items[n].link;
+
+	        //Display image
+	        $('#apiInfo').append('<img src="' + randomImg + '">');
+
+	        resultNum++;
+		    level++;
+
+
+	        //Click no button
+	        $('#btnNo').on('click', function () {
+	        	//Update result and level for message
+
+	          	search();
+	        });
+
+	        //CLick YES – display text from array and return to main screen
+	        $('#btnYes').on('click', function () {
+	        	$('.modal-footer').addClass('display-none');
+	          	$('#apiInfo').empty();
+
+				messages();
+				level = 1;
+				resultNum = 0;
+	        });
       });
     }else if (resultNum == 2) {
-      $.ajax({ url: youtubequeryURL, method: 'GET' })
-        .done(function (results2) {
-          console.log("Videos");
-          console.log(results2);
+    	console.log('results number:' + resultNum);
+    	$.ajax({ url: youtubequeryURL, method: 'GET' })
+		.done(function (results2) {
+			console.log("VIDEO RESULTS");
+			console.log('KEYWORDS: ' + keywords)
+			console.log(results2);
 
-          $('#videoDiv').empty();
-          $('#apiInfo').empty();
+			$('#apiInfo').empty();
 
-          var n2 = Math.floor(Math.random() * 4);
-          var randomVid = results2.items[n2].id.videoId;
-          console.log("N2=" + n2);
-          //Add videos
-          $('#videoDiv').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
+			//Randomly select video from 5 results
+			var n2 = Math.floor(Math.random() * 4);
+			var randomVid = results2.items[n2].id.videoId;
+			console.log('test' + randomVid);
+			console.log("N2=" + n2);
 
-          //Add buttons yes/no
-          $('#apiInfo').append('Do you feel better yet?');
-          //$('#apiInfo').prepend(yesBtn, noBtn);
+			//Add videos
+			$('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
 
-          resultNum++;
+			//resultNum++;
 
-          console.log("ResultNum " + resultNum);
+			//Click NO button
+			$('#btnNo').on('click', function () {
+				$('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
+				$('.modal-footer').addClass('display-none');
+				level = 1;
+				resultNum = 0;
+			});
 
-          $('#btnNo').on('click', function () {
-            $('#apiInfo').html('You have a major problem. Be careful out there.');
-            $('#videoDiv').empty();
-            level = 1;
-          });
+			//On YES click display text from array and return to main screen
+			$('#btnYes').on('click', function () {
+				$('#apiInfo').empty();
+				$('.modal-footer').addClass('display-none');
 
-          //On YES click display text from array and return to main screen
-          $('#btnYes').on('click', function () {
-            $('#apiInfo').empty();
-            $('#videoDiv').empty();
-            messages();
-            level = 1;
+				messages();
+				level = 1;
+				resultNum = 0;
           });
         });
     }
   }
   function messages(){
     if (level == 1) {
-      $('#apiInfo').html(level1[Math.floor(Math.random() * level1.length)]);
+      $('#apiInfo').html('<h2>' + level1[Math.floor(Math.random() * level1.length)] + '</h2>');
     }else if (level == 2) {
-      $('#apiInfo').html(level2[Math.floor(Math.random() * level2.length)]);
+      $('#apiInfo').html('<h2>' + level2[Math.floor(Math.random() * level2.length)] + '</h2>');
     }else {
-      $('#apiInfo').html(level3[Math.floor(Math.random() * level3.length)]);
+      $('#apiInfo').html('<h2>' + level3[Math.floor(Math.random() * level3.length)] + '</h2>');
     }
   };
-  search();
 
 });
