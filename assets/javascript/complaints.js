@@ -60,20 +60,19 @@ $(document).ready(function(){
 		var ref = firebase.database().ref('complaints/' + complaintCategory);
 
 		ref.orderByChild("complaint").equalTo(chosenComplaint).on("child_added", function(snapshot) {
-		  	keywords = snapshot.val().keywords;
+		  	keywords = snapshot.val().keywords.join('-');
 		  	console.log(keywords);
 			googlequeryURL = 'https://www.googleapis.com/customsearch/v1?key=' + gKey + '&cx=' + cx + '&searchType=image&q=' + keywords;
+			console.log("video keywords" + keywords);
 			youtubequeryURL = 'https://www.googleapis.com/youtube/v3/search?key=' + yKey + '&part=snippet' + '&order=viewCount' + '&type=video' + '&videoDuration=short' + '&videoEmbeddable=true' + '&q=' + keywords;
 			search();
-			console.log(googlequeryURL);
-		  	//$('#modal2').html(keywords);
+		  	
 		  	$('#modal2').openModal({
-		  		 complete: function() { 
+		  		complete: function() { 
 		  		 	$('#apiInfo').empty;
 		  		 	resultNum = 0;
 					level = 1;
-
-		  		 } // Callback for Modal close
+		  		} // Callback for Modal close
     		});
 		});
 
@@ -124,8 +123,6 @@ $(document).ready(function(){
         keywords: complaintKeywords,
       }
 
-
-
       if (complaintCategory == 'family') {
         database.ref('complaints/family').push(newComplaint);
       } else if (complaintCategory == 'job') {
@@ -144,81 +141,90 @@ $(document).ready(function(){
 
 
 	//Happens when they click complaint or after adding a complaint.
-	function search() {
+	function search(keywords) {
 		$('.modal-footer').removeClass('display-none');
 
 	    if (resultNum < 2) {
+	    	console.log('results number:' + resultNum);
 			$.ajax({ url: googlequeryURL, method: 'GET' })
 			.done(function (results) {
-			console.log("Images");
+			console.log("IMAGE RESULTS:");
 			console.log(results);
 
-			//$('#videoDiv').empty();
 			$('#apiInfo').empty();
 
+			//Randomly select image from 10 results
 			var n = Math.floor(Math.random() * 9);
 
+			//Don't repeat images in one session
 			while(usedImages.indexOf(n) != -1) {
 			  n = Math.floor(Math.random() * 9);
 			}
 
 	        usedImages.push(n);
 	        var randomImg = results.items[n].link;
-	        console.log("N=" + n);
-	        //Add image
+	        
+	        //Display image
 	        $('#apiInfo').append('<img src="' + randomImg + '">');
 
-	        //Add the option to click yes or no, display button and text.
-	        //$('#apiInfo').prepend(yesBtn, noBtn);
-
 	        resultNum++;
-	        level++;
-	        console.log("ResultNum " + resultNum);
+		    level++;
+	       
 
+	        //Click no button
 	        $('#btnNo').on('click', function () {
-	          console.log("level " + level);
-	          search();
+	        	//Update result and level for message
+		        
+	          	search();
 	        });
 
-	        //On YES click display text from array and return to main screen
+	        //CLick YES – display text from array and return to main screen
 	        $('#btnYes').on('click', function () {
-	          $('#apiInfo').empty();
-	          $('.modal-footer').addClass('display-none');
-	          messages();
-	          level = 0;
+	        	$('.modal-footer').addClass('display-none');
+	          	$('#apiInfo').empty();
+				
+				messages();
+				level = 1;
+				resultNum = 0;
 	        });
       });
     }else if (resultNum == 2) {
-      $.ajax({ url: youtubequeryURL, method: 'GET' })
-        .done(function (results2) {
-          console.log("Videos");
-          console.log(results2);
+    	console.log('results number:' + resultNum);
+    	$.ajax({ url: youtubequeryURL, method: 'GET' })
+		.done(function (results2) {
+			console.log("VIDEO RESULTS");
+			console.log('KEYWORDS: ' + keywords)
+			console.log(results2);
 
-          //$('#videoDiv').empty();
-          $('#apiInfo').empty();
+			$('#apiInfo').empty();
 
-          var n2 = Math.floor(Math.random() * 4);
-          var randomVid = results2.items[n2].id.videoId;
-          console.log("N2=" + n2);
-          //Add videos
-          $('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
+			//Randomly select video from 5 results
+			var n2 = Math.floor(Math.random() * 4);
+			var randomVid = results2.items[n2].id.videoId;
+			console.log('test' + randomVid);
+			console.log("N2=" + n2);
 
-           resultNum++;
+			//Add videos
+			$('#apiInfo').append('<iframe width="420" height="315" src="https://www.youtube.com/embed/' + randomVid + '?autoplay=1"></iframe>');
 
-          console.log("ResultNum " + resultNum);
+			//resultNum++;
 
-          $('#btnNo').on('click', function () {
-            $('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
-			$('.modal-footer').addClass('display-none');
-            level = 1;
-          });
+			//Click NO button 
+			$('#btnNo').on('click', function () {
+				$('#apiInfo').html('<h2>You have a major problem. Be careful out there.</h2>');
+				$('.modal-footer').addClass('display-none');
+				level = 1;
+				resultNum = 0;
+			});
 
-          //On YES click display text from array and return to main screen
-          $('#btnYes').on('click', function () {
-            $('#apiInfo').empty();
-            $('.modal-footer').addClass('display-none');
-            messages();
-            level = 1;
+			//On YES click display text from array and return to main screen
+			$('#btnYes').on('click', function () {
+				$('#apiInfo').empty();
+				$('.modal-footer').addClass('display-none');
+				
+				messages();
+				level = 1;
+				resultNum = 0;
           });
         });
     }
